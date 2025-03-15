@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Picfy</title>
+
+    <!-- Meta tags for SEO and Open Graph -->
+    <meta name="description" content="Alat pengunduh pas photo dari mahasiswa Universitas Negeri Gorontalo.">
+
+    <!-- Open Graph meta tags -->
+    <meta property="og:title" content="Picfy">
+    <meta property="og:description" content="Alat pengunduh pas photo dari mahasiswa Universitas Negeri Gorontalo.">
+    <meta property="og:url" content="https://picfy.vercel.app">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card data -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Picfy">
+    <meta name="twitter:description" content="Alat pengunduh pas photo dari mahasiswa Universitas Negeri Gorontalo.">
+
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Poppins:wght@400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input {
+            -moz-appearance: textfield;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #080c15;
+            background-image: linear-gradient(-120deg, #060c19 10%, #000000 100%);
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* color: rgba(64, 0, 255, 0.025); */
+        }
+    </style>
+</head>
+
+<body class="min-h-screen w-screen text-white flex items-center justify-center">
+    <canvas id="particles" class="z-10"></canvas>
+    <section class="container flex justify-center w-screen px-4 z-20">
+        <div class="p-6 md:p-12 bg-slate-800 w-full max-w-[800px] rounded-xl">
+            <div class="flex flex-col md:flex-row justify-between space-y-8 md:space-y-0 md:space-x-8">
+
+                <div class="flex-1">
+                    <p class="text-xl font-bold mb-4 uppercase">Alat pengunduh pas photo dari mahasiswa Universitas Negeri
+                        Gorontalo.</p>
+                    <form action="/" method="post" class="space-y-3">
+                        <label for="nim" class="block text-sm ">Masukkan Nomor Induk Mahasiswa</label>
+                        <input required name="nim" type="number" maxlength="15"
+                            class="w-full bg-[#00000063] rounded p-1 px-2 border-gray-300 ring-0 outline-none border focus:border-blue-600 transition"
+                            placeholder="NIM">
+                        <% if(data==null && is_error) { %>
+                            <p id="errmsg" class="text-red-600 text-sm">Data tidak ditemukan!</p>
+                            <% } %>
+                                <div class="pt-2">
+                                    <button
+                                        class="w-full md:w-auto lg:px-4 lg:py-2 px-5 py-2 rounded bg-blue-500 hover:bg-blue-600">Submit</button>
+                                </div>
+                    </form>
+                </div>
+
+                <div class="flex-1 flex flex-col items-center space-y-4">
+                    <div class="<% if(data==null) { %> bg-[#0004] border border-slate-100 w-[250px] h-[350px]<% } else { %> w-[250px] h-[350px] <% } %> rounded-xl flex items-center justify-center">
+                        <% if(data?.pp !=null) { %>
+                            <img id="pp" class="rounded-xl hover:scale-[1.01] transition cursor-pointer mb-5 object-contain w-full h-full"
+                                src="<%= data?.pp %>" alt="Pas Photo">
+                        <% } %> 
+                    </div>
+                    
+                    
+                    
+                    
+                    <% if(data !=null) { %>
+                        <div id="nama" class="text-center text-sm">
+                            <%= data?.nama %>
+                        </div>
+                        <!-- <a id="downloadBtn"  href="#" class="px-5 py-2 rounded bg-blue-500 hover:bg-blue-600 flex items-center space-x-2" >
+                            <i class="fa fa-download" title="Download"></i>&nbsp; Download
+                        </a> -->
+                        <a href="<%= data.pp %>" class="px-5 py-2 rounded bg-blue-500 hover:bg-blue-600 flex items-center space-x-2" download="<%= data.nama%>.jpg">
+                            <i class="fa fa-download"></i>&nbsp; Download
+                        </a>
+
+                        <script> 
+                            const downloadBtn = document.getElementById("downloadBtn"); 
+                            function base64ToBlob(base64) {
+                                const byteString = atob(base64.split(',')[1]);
+                                const mimeString = base64.split(',')[0].split(':')[1].split(';')[0];
+                                const ab = new ArrayBuffer(byteString.length);
+                                const ia = new Uint8Array(ab);
+
+                                for (let i = 0; i < byteString.length; i++) {
+                                    ia[i] = byteString.charCodeAt(i);
+                                }
+
+                                return new Blob([ab], { type: mimeString });
+                            }
+ 
+                            downloadBtn.addEventListener('click', () => {
+                                const blob = base64ToBlob("<%= data?.pp %>");
+                                const url = URL.createObjectURL(blob);
+
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = '<%= data?.nama %>.jpg';  
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+
+                                URL.revokeObjectURL(url);
+                            });
+
+                        </script>
+                        <% } %>
+                </div>
+
+            </div>
+
+            <footer class="text-gray-600 flex mt-12">
+                <code class="m-auto text-sm flex flex-col"><span class="text-center">Developed by Kaidev - @whyutams </span><span class="text-center">all source from <a href="//mahasiswa.ung.ac.id" class="hover:text-gray-400" target="_blank">mahasiswa.ung.ac.id</a></span></code>
+            </footer>
+        </div>
+    </section>
+
+
+    <script>
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particlesArray = [];
+
+        class Particle {
+            constructor(x, y, dx, dy, radius) {
+                this.x = x;
+                this.y = y;
+                this.dx = dx;
+                this.dy = dy;
+                this.radius = radius;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                ctx.fillStyle = 'rgba(64, 0, 255, 0.1)';
+                ctx.fill();
+            }
+
+            update() {
+                if (this.x + this.radius > canvas.width || this.x - this.radius < 0) {
+                    this.dx = -this.dx;
+                }
+
+                if (this.y + this.radius > canvas.height || this.y - this.radius < 0) {
+                    this.dy = -this.dy;
+                }
+
+                this.x += this.dx;
+                this.y += this.dy;
+
+                this.draw();
+            }
+        }
+
+        function createParticles() {
+            for (let i = 0; i < 100; i++) {
+                const radius = Math.random() * 3 + 1;
+                const x = Math.random() * (canvas.width - radius * 2) + radius;
+                const y = Math.random() * (canvas.height - radius * 2) + radius;
+                const dx = (Math.random() - 0.5) * 2;
+                const dy = (Math.random() - 0.5) * 2;
+                particlesArray.push(new Particle(x, y, dx, dy, radius));
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particlesArray.forEach(particle => {
+                particle.update();
+            });
+        }
+
+        createParticles();
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particlesArray.length = 0;
+            createParticles();
+        });
+    </script>
+
+</body>
+
+</html>
