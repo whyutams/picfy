@@ -21,8 +21,7 @@ app.all('/', async (req, res) => {
     let data = {};
 
     if (req.method == 'POST') {
-        postData = req.body;
-        console.log("Data yang diterima:", postData);
+        postData = req.body; 
 
         let nim = postData?.nim?.slice(0, 12);
         (async () => {
